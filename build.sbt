@@ -1,3 +1,5 @@
+import MimaSettings.mimaSettings
+
 enablePlugins(ZioSbtEcosystemPlugin, ZioSbtCiPlugin)
 
 inThisBuild(
@@ -44,6 +46,10 @@ addCommandAlias(
   "compileExamples",
   "opentracingExample/compile;opentelemetryExample/compile;opentelemetryInstrumentationExample/compile"
 )
+addCommandAlias(
+  "mimaChecks",
+  "all opentracing/mimaReportBinaryIssues opentelemetry/mimaReportBinaryIssues opencensus/mimaReportBinaryIssues"
+)
 
 // Fix 'Flag set repeatedly' error allegedly introduced by the usage of sdtSettings
 lazy val tempFixScalacOptions =
@@ -67,6 +73,7 @@ lazy val opentracing =
       scalacOptions --= tempFixScalacOptions
     )
     .settings(libraryDependencies ++= Dependencies.opentracing)
+    .settings(mimaSettings(failOnProblem = true))
 
 lazy val opentelemetry =
   project
@@ -80,6 +87,7 @@ lazy val opentelemetry =
       scalacOptions --= tempFixScalacOptions
     )
     .settings(libraryDependencies ++= Dependencies.opentelemetry)
+    .settings(mimaSettings(failOnProblem = true))
 
 lazy val opencensus = project
   .in(file("opencensus"))
@@ -92,6 +100,7 @@ lazy val opencensus = project
     scalacOptions --= tempFixScalacOptions
   )
   .settings(libraryDependencies ++= Dependencies.opencensus)
+  .settings(mimaSettings(failOnProblem = true))
 
 lazy val opentracingExample =
   project
